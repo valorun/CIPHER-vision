@@ -1,0 +1,7 @@
+__pycache__
+*.log
+*.pyc
+*.json
+**/yolov3.cfg
+**/yolov3.classes
+**/yolov3.weights
