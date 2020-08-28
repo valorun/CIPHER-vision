@@ -4,7 +4,7 @@ import paho.mqtt.client as Mqtt
 from logging.handlers import RotatingFileHandler
 from logging.config import dictConfig
 
-from .constants import MQTT_CLIENT_ID, MQTT_BROKER_URL, MQTT_BROKER_PORT, LOG_FILE
+from .constants import MQTT_CLIENT_ID, MQTT_BROKER_URL, MQTT_BROKER_PORT, LOG_FILE, ICON
 from .stream_handler import StreamHandler
 mqtt = None
 
@@ -29,6 +29,7 @@ def create_app(debug=False):
         logging.info("Connected with result code " + str(rc))
         client.subscribe('server/connect')
         client.subscribe('camera/#')
+        client.subscribe('client/' + MQTT_CLIENT_ID + '/#')
         notify_server_connection()
 
     def notify_server_connection():
@@ -36,6 +37,7 @@ def create_app(debug=False):
         Give all information about the connected client to the server when needed.
         """
         mqtt.publish('camera/connect', json.dumps({'id':MQTT_CLIENT_ID}))
+        mqtt.publish('client/connect', json.dumps({'id':MQTT_CLIENT_ID, 'icon':ICON}))
 
     def on_message(client, userdata, msg):
         """
@@ -54,8 +56,8 @@ def create_app(debug=False):
             camera_stream.stop()
         elif topic == 'camera/detect_objects':
             camera_stream.detect_objects()
-
-
+        elif topic == 'client/' + MQTT_CLIENT_ID + '/exit':
+            exit(0)
 
     mqtt.on_connect = on_connect
     mqtt.on_message = on_message

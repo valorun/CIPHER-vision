@@ -6,6 +6,8 @@ MQTT_BROKER_PORT=1883 # default is 1883
 
 LOG_FILE=join(dirname(__file__), 'app.log')
 
+ICON='fas fa-eye'
+
 YOLO_WEIGHTS_PATH = join(dirname(__file__), 'yolov3.weights')
 YOLO_CLASSES_PATH = join(dirname(__file__), 'yolov3.classes')
 YOLO_CONFIG_PATH = join(dirname(__file__), 'yolov3.cfg')
