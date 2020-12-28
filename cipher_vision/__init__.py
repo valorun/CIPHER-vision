@@ -28,7 +28,6 @@ def create_app(debug=False):
         """
         logging.info("Connected with result code " + str(rc))
         client.subscribe('server/connect')
-        client.subscribe('camera/#')
         client.subscribe('client/' + MQTT_CLIENT_ID + '/#')
         notify_server_connection()
 
@@ -36,7 +35,6 @@ def create_app(debug=False):
         """
         Give all information about the connected client to the server when needed.
         """
-        mqtt.publish('camera/connect', json.dumps({'id':MQTT_CLIENT_ID}))
         mqtt.publish('client/connect', json.dumps({'id':MQTT_CLIENT_ID, 'icon':ICON}))
 
     def on_message(client, userdata, msg):
@@ -50,11 +48,11 @@ def create_app(debug=False):
             data = msg.payload.decode('utf-8')
         if topic == 'server/connect': #when the server start or restart, notify this client is connected
             notify_server_connection()
-        elif topic == 'camera/start':
+        elif topic == 'client/' + MQTT_CLIENT_ID + '/start':
             camera_stream.start()
-        elif topic == 'camera/stop':
+        elif topic == 'client/' + MQTT_CLIENT_ID + '/stop':
             camera_stream.stop()
-        elif topic == 'camera/detect_objects':
+        elif topic == 'client/' + MQTT_CLIENT_ID + '/detect_objects':
             camera_stream.detect_objects()
         elif topic == 'client/' + MQTT_CLIENT_ID + '/exit':
             exit(0)

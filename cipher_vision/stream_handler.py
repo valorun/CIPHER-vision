@@ -17,7 +17,7 @@ class StreamHandler():
         if not self.camera.is_opened():
             self.camera.open()
         self.streaming.acquire()
-        self.client.publish('server/started_camera_stream')
+        self.client.publish('server/started_camera_stream/started')
         next_frame_time = time.time() + (CAMERA_FRAME_RATE / 60)
         while self.streaming.locked():
             current_time = time.time()
@@ -25,7 +25,7 @@ class StreamHandler():
                 jpeg = self.camera.get_jpeg_frame()
                 jpeg = jpeg.tobytes()
                 jpeg = base64.b64encode(jpeg).decode('utf-8')
-                self.client.publish('server/camera_stream', 'data:image/jpeg;base64,{}'.format(jpeg))
+                self.client.publish('server/camera_stream/frame', 'data:image/jpeg;base64,{}'.format(jpeg))
                 next_frame_time = time.time() + (CAMERA_FRAME_RATE / 60)
 
         self.camera.release()
@@ -35,7 +35,7 @@ class StreamHandler():
 
     def stop(self):
         self.streaming.release()
-        self.client.publish('server/stopped_camera_stream')
+        self.client.publish('server/camera_stream/stopped')
 
     def detect_objects(self):
         camera_is_opened = self.camera.is_opened()
